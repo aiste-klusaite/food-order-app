@@ -22,11 +22,13 @@
     "jsx": "react-jsx"
   },
   "plugins": [{ "name": "typescript-plugin-css-modules" }],
-  "paths": {
-    "@components": ["src/components/*"],
+  "baseUrl": ".",
+  "paths": { //alias doesn't work ????
+    "@components/*": ["components/*"],
+    "@assets/*": ["assets/*"]
   },
   "include": [
-    "src"
+    "./src"
   ],
   "exclude": ["node_modules"],
 }

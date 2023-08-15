@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
-import styles from './App.module.scss'
+import Header from './components/Layout/Header';
 
-function App() {
+const App: React.FC = () => {
   return (
-    <div className={styles.App}>
-      miauuu
-    </div>
+    <Fragment>
+      <Header/> 
+    </Fragment>
   );
 }
 
