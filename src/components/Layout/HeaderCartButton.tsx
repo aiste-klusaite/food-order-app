@@ -1,7 +1,7 @@
 import React from "react";
+
 import CartIcon from "../../assets/Icons/CartIcon";
 import classes from './HeaderCartButton.module.scss';
-
 
 const HeaderCartButton: React.FC = () => {
     return (
