@@ -4,15 +4,16 @@ import ReactDOM from 'react-dom';
 import classes from './Modal.module.scss';
 
 interface ModalProps {
-    children: React.ReactNode;
+    children?: React.ReactNode;
+    onClose?: () => void;
 }
 
 
-const Backdrop = () => {
-    return <div className={classes.backdrop} />
+const Backdrop = ({onClose}: ModalProps) => {
+    return <div className={classes.backdrop} onClick={onClose}/>
 }
 
-const ModalOverlay: React.FC<ModalProps> = ({children}) => {
+const ModalOverlay = ({children}: ModalProps) => {
     return (
         <div className={classes.modal}>
             <div className={classes.content}>{children}</div>
@@ -22,10 +23,10 @@ const ModalOverlay: React.FC<ModalProps> = ({children}) => {
 
 const portalElement = document.getElementById('overlays');
 
-const Modal:React.FC<ModalProps> = ({children}) => {
+const Modal:React.FC<ModalProps> = ({children, onClose}) => {
     return (
     <Fragment>
-        {ReactDOM.createPortal(<Backdrop />, portalElement as HTMLElement)}
+        {ReactDOM.createPortal(<Backdrop onClose={onClose} />, portalElement as HTMLElement)}
         {ReactDOM.createPortal(<ModalOverlay>
             {children}
         </ModalOverlay>, portalElement as HTMLElement)}
