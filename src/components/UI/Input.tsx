@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 
 import classes from './Input.module.scss';
 
@@ -10,15 +10,17 @@ interface InputProps {
         min: string;
         max: string;
         step: string;
-        defaultValue: string
+        defaultValue: string;
     }
 }
 
-const Input: React.FC<InputProps> = ({label, input}) => {
+export type RefType = HTMLInputElement;
+
+const Input = forwardRef<RefType, InputProps>(({label, input}, ref) => {
     return <div className={classes.input}>
         <label htmlFor={input.id}>{label}</label>
-        <input {...input}/>
+        <input {...input} ref={ref}/>
     </div>
-};
+});
 
 export default Input;
