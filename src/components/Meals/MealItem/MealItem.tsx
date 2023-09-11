@@ -3,7 +3,6 @@ import React, { useContext } from "react";
 import classes from './MealItem.module.scss';
 import MealItemForm from "./MealItemForm";
 import CartContext from "../../../store/cart-context";
-import { ItemMeal } from "../../../Model/ItemMeal";
 
 interface MealItemProps {
     name: string;
@@ -14,10 +13,11 @@ interface MealItemProps {
 
 const MealItem: React.FC<MealItemProps> = ({ name, description, price, mealId}) => {
     const cartCtx = useContext(CartContext);
+    const { addItem } = cartCtx;
     const modifiedPrice = `$${price.toFixed(2)}`
 
     const addToCartHandler = (amount: number) => {
-        cartCtx.addItem({
+        addItem({
             name: name,
             amount: amount,
             price: price,
