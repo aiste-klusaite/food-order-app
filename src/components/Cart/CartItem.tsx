@@ -1,8 +1,6 @@
 import React from 'react';
 import classes from './CartItem.module.scss';
 import { ItemMeal } from '../../Model/ItemMeal';
-import { on } from 'events';
-
 interface CartItemProps {
     item: ItemMeal;
     onRemove: (id: string) => void;

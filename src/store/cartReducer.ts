@@ -1,4 +1,3 @@
-import { act } from "react-dom/test-utils";
 import { ItemMeal } from "../Model/ItemMeal";
 
 interface AddToCartAction {

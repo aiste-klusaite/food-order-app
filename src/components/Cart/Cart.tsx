@@ -34,7 +34,7 @@ const Cart: React.FC<CartProps> = ({onClose}) => {
                 onRemove={() => cartItemRemoveHandler(item.mealId)}
                 onAdd={cartItemAddHandler}
             />))}
-    </ul>);
+        </ul>);
 
     return (
         <Modal onClose={onClose}>
