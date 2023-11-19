@@ -2,11 +2,7 @@ import { useRef, useState } from 'react';
 
 import classes from './Checkout.module.scss'
 import { UserData } from '../../Model/UserData';
-
-
-const isEmpty = (value: string | undefined) => value?.trim() === '';
-const isFiveChars = (value: string | undefined) => value?.trim().length != 5;
-
+import { isEmpty, isFiveChars } from '../../utils/formValidation';
 
 interface CheckoutProps {
     onCancel: () => void;

@@ -16,6 +16,7 @@ const Cart: React.FC<CartProps> = ({onClose}) => {
     const [isCheckout, setIsCheckout] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [didSubmit, setDidSubmit] = useState(false);
+    const [httpError, setHttpError] = useState('');
     const cartCtx = useContext(CartContext);
     const { items, totalAmount, removeItem, addItem } = cartCtx;
 
@@ -35,18 +36,29 @@ const Cart: React.FC<CartProps> = ({onClose}) => {
     }
 
     const submitOrderHandler = async (userData: UserData) => {
-        setIsSubmitting(true);
-        await fetch('https://react-food-app-c6a8e-default-rtdb.europe-west1.firebasedatabase.app/orders.json', {
-            method: 'POST',
-            body: JSON.stringify({
-                user: userData,
-                orderedItems: cartCtx.items
-            })
-        });
+            setIsSubmitting(true);
 
-        setIsSubmitting(false);
-        setDidSubmit(true);
-        cartCtx.clearCart();
+            await fetch('https://react-food-app-c6a8e-default-rtdb.europe-west1.firebasedatabase.app/orders.json', {
+                method: 'POST',
+                body: JSON.stringify({
+                    user: userData,
+                    orderedItems: cartCtx.items
+                })
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit order. Please try again later.');
+                  }
+
+                setIsSubmitting(false);
+                setDidSubmit(true);
+                setHttpError('');
+                cartCtx.clearCart();
+
+            }).catch((error: Error) => {
+                setHttpError(error.message);
+                setIsSubmitting(false);
+                setDidSubmit(false);
+            });
     }
 
     const cartItems = (
@@ -88,6 +100,7 @@ const Cart: React.FC<CartProps> = ({onClose}) => {
 
     return (
         <Modal onClose={onClose}>
+            {httpError && <div className={classes.error}>{httpError}</div>}
             {!isSubmitting && !didSubmit && cartModalContent}
             {isSubmitting && isSubmittingModalContent}
             {!isSubmitting && didSubmit && didSubmitModalContent}
