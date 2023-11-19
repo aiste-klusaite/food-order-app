@@ -1,16 +1,22 @@
-import React, { useContext } from "react";
+import React, { Fragment, useContext, useState } from "react";
 
 import classes from './Cart.module.scss';
 import Modal from "../UI/Modal";
 import CartContext from "../../store/cart-context";
 import CartItem from "./CartItem";
 import { ItemMeal } from "../../Model/ItemMeal";
+import Checkout from "./Checkout";
+import { UserData } from "../../Model/UserData";
 
 interface CartProps {
     onClose: () => void;
 }
 
 const Cart: React.FC<CartProps> = ({onClose}) => {
+    const [isCheckout, setIsCheckout] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [didSubmit, setDidSubmit] = useState(false);
+    const [httpError, setHttpError] = useState('');
     const cartCtx = useContext(CartContext);
     const { items, totalAmount, removeItem, addItem } = cartCtx;
 
@@ -25,6 +31,36 @@ const Cart: React.FC<CartProps> = ({onClose}) => {
         addItem(item);
     };
 
+    const orderHandler = () => {
+        setIsCheckout(true);
+    }
+
+    const submitOrderHandler = async (userData: UserData) => {
+            setIsSubmitting(true);
+
+            await fetch('https://react-food-app-c6a8e-default-rtdb.europe-west1.firebasedatabase.app/orders.json', {
+                method: 'POST',
+                body: JSON.stringify({
+                    user: userData,
+                    orderedItems: cartCtx.items
+                })
+            }).then((response) => {
+                if (!response.ok) {
+                    throw new Error('Failed to submit order. Please try again later.');
+                  }
+
+                setIsSubmitting(false);
+                setDidSubmit(true);
+                setHttpError('');
+                cartCtx.clearCart();
+
+            }).catch((error: Error) => {
+                setHttpError(error.message);
+                setIsSubmitting(false);
+                setDidSubmit(false);
+            });
+    }
+
     const cartItems = (
         <ul className={classes['cart-items']}>
         {items.map((item) => (
@@ -35,18 +71,39 @@ const Cart: React.FC<CartProps> = ({onClose}) => {
                 onAdd={cartItemAddHandler}
             />))}
         </ul>);
+    
+    const modalActions = (
+        <div className={classes.actions}>
+            <button className={classes['button--alt']} onClick={onClose}>Close</button>
+            {hasItems && <button className={classes.button} onClick={orderHandler}>Order</button>}
+        </div>
+    )
 
-    return (
-        <Modal onClose={onClose}>
-            {cartItems}
+    const cartModalContent = (<Fragment>
+        {cartItems}
             <div className={classes.total}>
                 <span>Total Amount</span>
                 <span>{totalCartAmount}</span>
             </div>
+            {isCheckout && <Checkout onSubmit={submitOrderHandler} onCancel={onClose}/>}
+            {!isCheckout && modalActions}
+    </Fragment>)
+
+    const isSubmittingModalContent = <p>Sensding order data...</p>
+
+    const didSubmitModalContent = (<Fragment>
+            <p>Succesfully sent the order!</p>
             <div className={classes.actions}>
-                <button className={classes['button--alt']} onClick={onClose}>Close</button>
-                {hasItems && <button className={classes.button}>Order</button>}
-            </div>
+            <button className={classes.button} onClick={onClose}>Close</button>
+        </div>
+        </Fragment>)
+
+    return (
+        <Modal onClose={onClose}>
+            {httpError && <div className={classes.error}>{httpError}</div>}
+            {!isSubmitting && !didSubmit && cartModalContent}
+            {isSubmitting && isSubmittingModalContent}
+            {!isSubmitting && didSubmit && didSubmitModalContent}
         </Modal>
     )
 };

@@ -6,13 +6,15 @@ type CartContent = {
     totalAmount: number;
     addItem: (item: ItemMeal) => void;
     removeItem: (id: string) => void;
+    clearCart: () => void;
 }
 
 const CartContext = createContext<CartContent>({
     items: [],
     totalAmount: 0,
     addItem: () => {},
-    removeItem: () => {}
+    removeItem: () => {},
+    clearCart: () => {},
 });
 
 export default CartContext;
