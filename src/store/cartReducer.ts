@@ -10,12 +10,16 @@ interface RemoveFromCartAction {
     payload: string;
 }
 
+interface ClearCartAction {
+    type: 'CLEAR';
+}
+
 interface cartState {
     items: ItemMeal[],
     totalAmount: number,
 }
 
-export type CartAction = AddToCartAction | RemoveFromCartAction;
+export type CartAction = AddToCartAction | RemoveFromCartAction | ClearCartAction;
 
 export const defaultCartState: cartState = {
     items: [],
@@ -70,6 +74,10 @@ export const cartReducer = (state: cartState, action: CartAction) => {
             items: updatedItems,
             totalAmount: updatedTotalAmount
         }
+    }
+
+    if (action.type === 'CLEAR') {
+        return defaultCartState;
     }
 
     return defaultCartState;
